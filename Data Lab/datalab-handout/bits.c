@@ -158,8 +158,9 @@ int bitXor(int x, int y) {
  *   Rating: 1
  */
 int tmin(void) {
-
-  return 2;
+  int a = 1;
+  a = a << 31; 
+  return a;
 
 }
 //2
@@ -171,6 +172,7 @@ int tmin(void) {
  *   Rating: 1
  */
 int isTmax(int x) {
+
   return 2;
 }
 /* 
