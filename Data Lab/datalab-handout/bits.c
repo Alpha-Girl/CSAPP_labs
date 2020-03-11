@@ -13,6 +13,7 @@
  * case it's OK.  
  */
 
+
 #if 0
 /*
  * Instructions to Students:
@@ -143,8 +144,13 @@ NOTES:
  *   Rating: 1
  */
 int bitXor(int x, int y) {
-  return 2;
+  
+  int L1 = x & ~y;
+  int L2 = ~x & y;
+  
+  return ~(~L1 & ~L2); 
 }
+
 /* 
  * tmin - return minimum two's complement integer 
  *   Legal ops: ! ~ & ^ | + << >>
