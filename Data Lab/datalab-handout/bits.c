@@ -257,7 +257,10 @@ int conditional(int x, int y, int z)
  */
 int isLessOrEqual(int x, int y)
 {
-  return 2;
+  int x_neg, y_neg;
+  x_neg = x >> 31;
+  y_neg = y >> 31;
+  return !(((!x_neg) & y_neg) | ((!(x_neg ^ y_neg)) & (y + ~x + 1) >> 31));
 }
 //4
 /* 
@@ -270,8 +273,9 @@ int isLessOrEqual(int x, int y)
  */
 int logicalNeg(int x)
 {
-
-  return 2;
+  int minus_x;
+  minus_x = ~x + 1;
+  return ~((minus_x | x) >> 31) & 1;
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
@@ -287,7 +291,18 @@ int logicalNeg(int x)
  */
 int howManyBits(int x)
 {
-  return 0;
+  int sign, pos, bias;
+  sign = x >> 31;
+  /* if negative, don't negate, just flip bits */
+  x = (sign & (~x)) | (~sign & x);
+  /* bias=1 if x==0 */
+  bias = !(x ^ 0);
+  pos = (!!(x >> 16)) << 4;
+  pos |= (!!(x >> (pos + 8))) << 3;
+  pos |= (!!(x >> (pos + 4))) << 2;
+  pos |= (!!(x >> (pos + 2))) << 1;
+  pos |= x >> (pos + 1);
+  return (pos + 2 + (~bias + 1));
 }
 //float
 /* 
@@ -303,7 +318,32 @@ int howManyBits(int x)
  */
 unsigned floatScale2(unsigned uf)
 {
-  return 2;
+  unsigned sign = uf >> 31;
+  unsigned exp = uf >> 23 & 0xFF;
+  unsigned frac = uf & 0x7FFFFF;
+  if (exp == 0)
+  {
+    /* Denormalized.  Must double fraction */
+    frac = 2 * frac;
+    if (frac > 0x7FFFFF)
+    {
+      /* Result normalized */
+      frac = frac & 0x7FFFFF; /* Chop off leading bit */
+      exp = 1;
+    }
+  }
+  else if (exp < 0xFF)
+  {
+    /* Normalized.  Increase exponent */
+    exp++;
+    if (exp == 0xFF)
+    {
+      /* Infinity */
+      frac = 0;
+    }
+  }
+  /* Infinity and NaN do not require any changes */
+  return (sign << 31) | (exp << 23) | frac;
 }
 /* 
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
@@ -319,7 +359,34 @@ unsigned floatScale2(unsigned uf)
  */
 int floatFloat2Int(unsigned uf)
 {
-  return 2;
+  unsigned sign = uf >> 31;
+  unsigned exp = (uf >> 23) & 0xFF;
+  unsigned frac = uf & 0x7FFFFF;
+  /* Create normalized value with leading one inserted,
+     and rest of significand in bits 8--30.
+  */
+  unsigned val = 0x80000000u + (frac << 8);
+  if (exp < 127)
+  {
+    /* Absolute value is < 1 */
+    return 0;
+  }
+  if (exp > 158)
+    /* Overflow */
+    return 0x80000000u;
+  /* Shift val right */
+  val = val >> (158 - exp);
+  /* Check if out of range */
+  if (sign)
+  {
+    /* Negative */
+    return val > 0x80000000u ? 0x80000000u : -val;
+  }
+  else
+  {
+    /* Positive */
+    return val > 0x7FFFFFFF ? 0x80000000u : val;
+  }
 }
 /* 
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
@@ -336,5 +403,32 @@ int floatFloat2Int(unsigned uf)
  */
 unsigned floatPower2(int x)
 {
-  return 2;
+  unsigned sign = uf >> 31;
+  unsigned exp = (uf >> 23) & 0xFF;
+  unsigned frac = uf & 0x7FFFFF;
+  /* Create normalized value with leading one inserted,
+     and rest of significand in bits 8--30.
+  */
+  unsigned val = 0x80000000u + (frac << 8);
+  if (exp < 127)
+  {
+    /* Absolute value is < 1 */
+    return 0;
+  }
+  if (exp > 158)
+    /* Overflow */
+    return 0x80000000u;
+  /* Shift val right */
+  val = val >> (158 - exp);
+  /* Check if out of range */
+  if (sign)
+  {
+    /* Negative */
+    return val > 0x80000000u ? 0x80000000u : -val;
+  }
+  else
+  {
+    /* Positive */
+    return val > 0x7FFFFFFF ? 0x80000000u : val;
+  }
 }
