@@ -13,7 +13,6 @@
  * case it's OK.  
  */
 
-
 #if 0
 /*
  * Instructions to Students:
@@ -133,7 +132,6 @@ NOTES:
  *      the correct answers.
  */
 
-
 #endif
 //1
 /* 
@@ -143,12 +141,13 @@ NOTES:
  *   Max ops: 14
  *   Rating: 1
  */
-int bitXor(int x, int y) {
-  
+int bitXor(int x, int y)
+{
+
   int L1 = x & ~y;
   int L2 = ~x & y;
-  
-  return ~(~L1 & ~L2); 
+
+  return ~(~L1 & ~L2);
 }
 
 /* 
@@ -157,11 +156,11 @@ int bitXor(int x, int y) {
  *   Max ops: 4
  *   Rating: 1
  */
-int tmin(void) {
+int tmin(void)
+{
   int a = 1;
-  a = a << 31; 
+  a = a << 31;
   return a;
-
 }
 //2
 /*
@@ -171,7 +170,8 @@ int tmin(void) {
  *   Max ops: 10
  *   Rating: 1
  */
-int isTmax(int x) {
+int isTmax(int x)
+{
   int a = 1;
   a = a << 31;
   a = a ^ x;
@@ -186,7 +186,8 @@ int isTmax(int x) {
  *   Max ops: 12
  *   Rating: 2
  */
-int allOddBits(int x) {
+int allOddBits(int x)
+{
   int a = 0x55;
   x = x | a;
   a = a << 8;
@@ -205,8 +206,9 @@ int allOddBits(int x) {
  *   Max ops: 5
  *   Rating: 2
  */
-int negate(int x) {
-  return ~x+1;
+int negate(int x)
+{
+  return ~x + 1;
 }
 //3
 /* 
@@ -218,16 +220,17 @@ int negate(int x) {
  *   Max ops: 15
  *   Rating: 3
  */
-int isAsciiDigit(int x) {
-  int a,b;
+int isAsciiDigit(int x)
+{
+  int a, b;
   a = x + 6;
   a = a >> 4;
   a = a ^ 3;
   a = !a;
-  b = x ;
+  b = x;
   b = b >> 4;
   b = b ^ 3;
-  b = !b;  
+  b = !b;
   return a & b;
 }
 /* 
@@ -237,8 +240,12 @@ int isAsciiDigit(int x) {
  *   Max ops: 16
  *   Rating: 3
  */
-int conditional(int x, int y, int z) {
-
+int conditional(int x, int y, int z)
+{
+  int notx, mask;
+  notx = !x;
+  mask = notx + ~0L;
+  return (y & mask) | (z & ~mask);
   return 2;
 }
 /* 
@@ -248,7 +255,8 @@ int conditional(int x, int y, int z) {
  *   Max ops: 24
  *   Rating: 3
  */
-int isLessOrEqual(int x, int y) {
+int isLessOrEqual(int x, int y)
+{
   return 2;
 }
 //4
@@ -260,8 +268,9 @@ int isLessOrEqual(int x, int y) {
  *   Max ops: 12
  *   Rating: 4 
  */
-int logicalNeg(int x) {
-  
+int logicalNeg(int x)
+{
+
   return 2;
 }
 /* howManyBits - return the minimum number of bits required to represent x in
@@ -276,7 +285,8 @@ int logicalNeg(int x) {
  *  Max ops: 90
  *  Rating: 4
  */
-int howManyBits(int x) {
+int howManyBits(int x)
+{
   return 0;
 }
 //float
@@ -291,7 +301,8 @@ int howManyBits(int x) {
  *   Max ops: 30
  *   Rating: 4
  */
-unsigned floatScale2(unsigned uf) {
+unsigned floatScale2(unsigned uf)
+{
   return 2;
 }
 /* 
@@ -306,7 +317,8 @@ unsigned floatScale2(unsigned uf) {
  *   Max ops: 30
  *   Rating: 4
  */
-int floatFloat2Int(unsigned uf) {
+int floatFloat2Int(unsigned uf)
+{
   return 2;
 }
 /* 
@@ -322,6 +334,7 @@ int floatFloat2Int(unsigned uf) {
  *   Max ops: 30 
  *   Rating: 4
  */
-unsigned floatPower2(int x) {
-    return 2;
+unsigned floatPower2(int x)
+{
+  return 2;
 }
